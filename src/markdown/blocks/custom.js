@@ -48,8 +48,8 @@ function isClosingTag(tag) {
  * @param  {String} type
  * @return {Boolean}
  */
-function isClosingTagFor(tag, forTag) {
-    return tag.indexOf(`end${forTag}`) === 0;
+function isClosingTagFor(closingTag, forTag) {
+    return `end${forTag}` === closingTag;
 }
 
 /**
@@ -153,12 +153,50 @@ const deserialize = Deserializer().matchRegExp(
 
         // By default it'll add this node as a single node.
         state = state.push(node);
-
         // List of tags that don't have an end
         const unendingTags = state.getProp('unendingTags') || List();
 
         const resultState = state.lex({
             stopAt(newState) {
+                const lastNode = newState.nodes.last();
+                // We just pushed an end tag, merge all in-between nodes
+                if (
+                    isCustomType(lastNode.type) &&
+                    isClosingTag(getTagFromCustomType(lastNode.type)) &&
+                    isClosingTagFor(getTagFromCustomType(lastNode.type), tag)
+                ) {
+                    const lastNodeTag = getTagFromCustomType(lastNode.type);
+                    const reversedNodes = newState.nodes.reverse();
+                    const matchingTagNode = reversedNodes.find(
+                        child =>
+                            isCustomType(child.type) &&
+                            isClosingTagFor(
+                                lastNodeTag,
+                                getTagFromCustomType(child.type)
+                            )
+                    );
+
+                    const beforeNodes = newState.nodes.takeUntil(
+                        child => child.key === matchingTagNode.key
+                    );
+                    const nodesToWrap = newState.nodes.skip(beforeNodes.size);
+
+                    const wrappedNodes = nodesToWrap.rest().butLast();
+                    const parentNode = nodesToWrap.first().merge({
+                        isVoid: false,
+                        nodes:
+                            wrappedNodes.size == 0
+                                ? List([state.genText()])
+                                : wrappedNodes
+                    });
+
+                    const updatedState = newState.merge({
+                        nodes: beforeNodes.push(parentNode)
+                    });
+
+                    return updatedState;
+                }
+
                 // What nodes have been added in this iteration?
                 const added = newState.nodes.skip(state.nodes.size);
                 const between = added.takeUntil(child => {
