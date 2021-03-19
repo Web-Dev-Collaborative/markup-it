@@ -3,6 +3,11 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+#### 13.0.0
+
+- Markdown: Make custom liquid tags parsing more robust, which might break in some advanced usage.
+- Upgrade dependencies
+
 #### 12.1.1
 
 - Markdown: Fix missing newline characters after serialized HTML table leading to invalid markdown
