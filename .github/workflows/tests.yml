@@ -1,0 +1,54 @@
+name: Tests
+
+on: [push]
+
+jobs:
+  # Lint
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+    # Setup
+    - uses: actions/checkout@v2
+    - uses: actions/cache@v2
+      with:
+        path: |
+          ./.yarn/cache
+          **/node_modules
+        key: ${{ runner.os }}-modules-${{ hashFiles('**/yarn.lock') }}
+        restore-keys: |
+          ${{ runner.os }}-modules-
+    - name: Setup node
+      uses: actions/setup-node@v2
+      with:
+        node-version: "14"
+    - name: Install dependencies
+      run: yarn --immutable
+    - name: Lint
+      run: yarn lint
+
+  # Run unit tests
+  tests:
+    name: Unit tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+    # Setup
+    - uses: actions/checkout@v2
+    - uses: actions/cache@v2
+      with:
+        path: |
+          ./.yarn/cache
+          **/node_modules
+        key: ${{ runner.os }}-modules-${{ hashFiles('**/yarn.lock') }}
+        restore-keys: |
+          ${{ runner.os }}-modules-
+    - name: Setup node
+      uses: actions/setup-node@v2
+      with:
+        node-version: "14"
+    - name: Install dependencies
+      run: yarn --immutable
+    - name: Unit tests
+      run: yarn test
