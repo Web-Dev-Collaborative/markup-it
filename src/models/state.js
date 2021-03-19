@@ -308,10 +308,12 @@ export class State extends Record(DEFAULTS) {
         const { rules } = state;
         let newState;
 
-        rules.filter(rule => rule[object]).forEach(rule => {
-            newState = RuleFunction.exec(rule[object], state);
-            return !newState;
-        });
+        rules
+            .filter(rule => rule[object])
+            .forEach(rule => {
+                newState = RuleFunction.exec(rule[object], state);
+                return !newState;
+            });
 
         return newState;
     }

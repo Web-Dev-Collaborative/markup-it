@@ -30,7 +30,11 @@ const REPLACEMENTS_UNESCAPE = REPLACEMENTS_ESCAPE.merge({
 const URL_REPLACEMENTS_UNESCAPE = REPLACEMENTS_UNESCAPE.merge({
     ' ': '%20'
 });
-const URL_REPLACEMENTS_ESCAPE = Map([[' ', '%20'], ['(', '%28'], [')', '%29']]);
+const URL_REPLACEMENTS_ESCAPE = Map([
+    [' ', '%20'],
+    ['(', '%28'],
+    [')', '%29']
+]);
 
 /**
  * Escape markdown syntax

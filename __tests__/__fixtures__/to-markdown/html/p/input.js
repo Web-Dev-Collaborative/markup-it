@@ -6,7 +6,7 @@ export default (
         <paragraph>
             <html
                 closingTag="</p>"
-                innerHtml="Hello <a href=&quot;https://www.google.com&quot;>World</a> !"
+                innerHtml='Hello <a href="https://www.google.com">World</a> !'
                 openingTag="<p>"
             />
         </paragraph>
